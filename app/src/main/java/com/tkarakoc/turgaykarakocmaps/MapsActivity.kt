@@ -119,9 +119,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+    val dinleyici = object : GoogleMap.OnMapLongClickListener {
+        override fun onMapLongClick(p0: LatLng?) {
+            mMap.clear()
+            val geocoder = Geocoder(this@MapsActivity, Locale.getDefault())
 
+            if(p0 != null) {
+                var adres = ""
+                try {
+                    val adresListesi = geocoder.getFromLocation(p0.latitude, p0.longitude, 1)
+                    if(adresListesi.size > 0) {
+                        if(adresListesi.get(0).thoroughfare != null) {
+                            adres += adresListesi.get(0).thoroughfare
 
+                            if(adresListesi.get(0).subThoroughfare != null ){
+                                adres += adresListesi.get(0).subThoroughfare
+                            }
+                        }
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                }
+
+                mMap.addMarker(MarkerOptions().position(p0).title(adres))
+            }
+        }
+
+    }
 }
+
+
+
 
 
 
