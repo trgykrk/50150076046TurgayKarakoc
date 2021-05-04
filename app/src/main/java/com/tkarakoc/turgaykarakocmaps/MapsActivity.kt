@@ -41,9 +41,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         val sydney = LatLng(-34.0, 151.0)
-        /*val ankara = LatLng(39.9208372, 32.8454561)
-        mMap.addMarker(MarkerOptions().position(ankara).title("Marker in Ankara"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ankara, 15f)) */
+
 
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
@@ -76,7 +74,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            //izin verilmemiş
+
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -84,7 +82,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
 
         } else {
-            //izin verilmiş
+
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 1,
@@ -111,7 +109,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if(requestCode == 1) {
             if(grantResults.size > 0) {
                 if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    // izin verildi
+
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1f, locationListener)
                 }
             }
@@ -147,10 +145,3 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 }
-
-
-
-
-
-
-
