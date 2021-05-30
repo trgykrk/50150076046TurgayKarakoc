@@ -11,13 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
+import com.google.android.gms.maps.*
 
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.lang.Exception
 import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -29,22 +28,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+                .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMapLongClickListener(dinleyici)
 
-
-        val sydney = LatLng(-34.0, 151.0)
-
-
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        /*val ankara = LatLng(39.9208372, 32.8454561)
+        mMap.addMarker(MarkerOptions().position(ankara).title("Marker in Ankara"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ankara, 15f)) */
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -60,46 +56,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 try {
 
                     val addressList = geocoder.getFromLocation(p0.latitude, p0.longitude, 1)
-                    if (addressList.size > 0) {
+                    if(addressList.size > 0) {
                         println(addressList.get(0).toString())
                     }
-                } catch (e: Exception) {
+                }catch (e: Exception){
                     e.printStackTrace()
                 }
             }
 
         }
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
 
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
 
         } else {
 
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                1,
-                1f,
-                locationListener
-            )
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1f, locationListener)
             val sonBilinenKonum = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (sonBilinenKonum != null) {
+            if(sonBilinenKonum != null) {
                 val sonBilinenLatLng = LatLng(sonBilinenKonum.latitude, sonBilinenKonum.longitude)
-                mMap.addMarker(
-                    MarkerOptions().position(sonBilinenLatLng).title("Son Bilinen Konumunuz")
-                )
+                mMap.addMarker(MarkerOptions().position(sonBilinenLatLng).title("Son Bilinen Konumunuz"))
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sonBilinenLatLng, 15f))
+
             }
         }
+    }
 
-     }
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<out String>,
@@ -117,6 +100,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
     val dinleyici = object : GoogleMap.OnMapLongClickListener {
         override fun onMapLongClick(p0: LatLng?) {
             mMap.clear()
